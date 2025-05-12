@@ -1,5 +1,5 @@
 // Добавляем обработку лимитов GitHub API
-const GITHUB_TOKEN = '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';
+const GITHUB_TOKEN = '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';
 const CACHE_TIME = 5 * 60 * 1000;
 
 async function fetchGitHub(url) {
