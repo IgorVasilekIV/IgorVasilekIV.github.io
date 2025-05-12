@@ -1,54 +1,75 @@
 // github-stats.js
-const CACHE_TIME = 10 * 60 * 1000; // 10 минут кэша
+const CACHE_TIME = 15 * 60 * 1000; // 15 минут кэша
+
+async function fetchReposWithRetry(username, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
+            
+            // Проверяем лимиты API
+            const remaining = parseInt(response.headers.get('X-RateLimit-Remaining'));
+            if (remaining < 5) {
+                console.warn('API лимит на исходе');
+                return null;
+            }
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            return await response.json();
+        } catch (error) {
+            if (i === retries - 1) throw error;
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+}
 
 async function loadGitHubStats() {
     try {
-        // Проверяем кэш
-        const cachedData = localStorage.getItem('gh-stats');
-        if (cachedData) {
-            const { data, timestamp } = JSON.parse(cachedData);
+        const cached = localStorage.getItem('gh-stats');
+        if (cached) {
+            const { data, timestamp } = JSON.parse(cached);
             if (Date.now() - timestamp < CACHE_TIME) {
                 renderStats(data);
                 return;
             }
         }
 
-        // Делаем один запрос вместо двух
-        const response = await fetch('https://api.github.com/users/IgorVasilekIV');
-        
-        // Обрабатываем лимиты API
-        const remaining = response.headers.get('X-RateLimit-Remaining');
-        if (remaining === '0') {
-            throw new Error('API лимит исчерпан. Попробуйте позже.');
+        // Получаем базовые данные пользователя
+        const userRes = await fetch('https://api.github.com/users/IgorVasilekIV');
+        if (!userRes.ok) throw new Error(`Ошибка ${userRes.status}`);
+        const userData = await userRes.json();
+
+        // Получаем репозитории с повтором запросов
+        const repos = await fetchReposWithRetry('IgorVasilekIV');
+        if (!repos) {
+            renderStats(userData); // Показываем базовые данные
+            return;
         }
 
-        if (!response.ok) {
-            throw new Error(`Ошибка ${response.status}`);
-        }
+        // Считаем реальные звёзды
+        const stars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
 
-        const userData = await response.json();
-        
-        // Используем данные из основного запроса
-        const statsData = {
+        const stats = {
             repos: userData.public_repos,
             followers: userData.followers,
-            stars: Math.floor(userData.public_repos * 1.2) // Примерная оценка
+            stars: stars
         };
 
-        // Сохраняем в кэш
         localStorage.setItem('gh-stats', JSON.stringify({
-            data: statsData,
+            data: stats,
             timestamp: Date.now()
         }));
 
-        renderStats(statsData);
+        renderStats(stats);
 
     } catch (error) {
-        console.error('GitHub Stats Error:', error);
-        showError(error.message);
-        
-        // Автоповтор через 5 секунд
-        setTimeout(loadGitHubStats, 5000);
+        console.error('Ошибка:', error);
+        document.getElementById('github-stats').innerHTML = `
+            <div class="error">
+                <p>📡 Данные обновляются...</p>
+                <small>${error.message.includes('403') ? 'Лимит API' : error.message}</small>
+            </div>
+        `;
     }
 }
 
@@ -64,18 +85,10 @@ function renderStats({ repos, followers, stars }) {
         </div>
         <div class="stat-item">
             <h3>Звёзды</h3>
-            <p>≈${stars}</p>
+            <p>${stars}</p>
         </div>
     `;
 }
 
-function showError(msg) {
-    document.getElementById('github-stats').innerHTML = `
-        <div class="error">
-            <p>📡 Обновление статистики...</p>
-            <small>${msg}</small>
-        </div>
-    `;
-}
-
+// Запуск при загрузке страницы
 document.addEventListener('DOMContentLoaded', loadGitHubStats);
