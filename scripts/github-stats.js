@@ -83,10 +83,6 @@ function renderStats({ repos, followers, stars }) {
             <h3>Подписчики</h3>
             <p>${followers}</p>
         </div>
-        <div class="stat-item">
-            <h3>Звёзды</h3>
-            <p>${stars}</p>
-        </div>
     `;
 }
 
