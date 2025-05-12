@@ -1,16 +1,38 @@
-// scripts/github-stats.js
+// Добавляем обработку лимитов GitHub API
+const GITHUB_TOKEN = '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';
+const CACHE_TIME = 5 * 60 * 1000;
+
+async function fetchGitHub(url) {
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'User-Agent': 'IgorVasilekIV-monke-bio'
+            }
+        });
+
+        if (response.status === 403) {
+            throw new Error('API rate limit exceeded');
+        }
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return response.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        throw error;
+    }
+}
+
 async function loadGitHubStats() {
     try {
-        const [userRes, reposRes] = await Promise.all([
-            fetch('https://api.github.com/users/IgorVasilekIV'),
-            fetch('https://api.github.com/users/IgorVasilekIV/repos')
+        const [userData, reposData] = await Promise.all([
+            fetchGitHub('https://api.github.com/users/IgorVasilekIV'),
+            fetchGitHub('https://api.github.com/users/IgorVasilekIV/repos')
         ]);
-        
-        if (!userRes.ok || !reposRes.ok) throw new Error('GitHub API error');
-        
-        const userData = await userRes.json();
-        const reposData = await reposRes.json();
-        
+
         const stars = reposData.reduce((acc, repo) => acc + repo.stargazers_count, 0);
         
         document.getElementById('github-stats').innerHTML = `
@@ -28,11 +50,15 @@ async function loadGitHubStats() {
             </div>
         `;
     } catch (error) {
-        console.error('Error:', error);
+        console.error('GitHub Stats Error:', error);
         document.getElementById('github-stats').innerHTML = `
-            <p class="error">Ой а где статистика 🙈</p>
+            <div class="error">
+                <p>Статистика временно недоступна 🐵</p>
+                <small>${error.message}</small>
+            </div>
         `;
     }
 }
 
-window.addEventListener('DOMContentLoaded', loadGitHubStats);
+// Инициализация
+document.addEventListener('DOMContentLoaded', loadGitHubStats);
