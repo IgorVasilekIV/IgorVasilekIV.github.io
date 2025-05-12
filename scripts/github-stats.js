@@ -1,4 +1,8 @@
 // Добавляем обработку лимитов GitHub API
+<<<<<<< HEAD
+=======
+const GITHUB_TOKEN = 'ghp_code';
+>>>>>>> f45a6b5 (Update: 13.05.2025 01:00)
 const CACHE_TIME = 5 * 60 * 1000;
 
 async function fetchGitHub(url) {
