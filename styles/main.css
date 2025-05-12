@@ -191,3 +191,10 @@ p {
         font-size: 0.9em;
     }
 }
+.error {
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
+    padding: 10px;
+    border-radius: 5px;
+    background: rgba(255, 107, 107, 0.1);
+}
