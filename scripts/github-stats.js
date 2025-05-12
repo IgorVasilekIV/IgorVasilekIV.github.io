@@ -46,9 +46,6 @@ async function loadGitHubStats() {
             return;
         }
 
-        // Считаем реальные звёзды
-        const stars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
-
         const stats = {
             repos: userData.public_repos,
             followers: userData.followers,
