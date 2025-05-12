@@ -1,0 +1,47 @@
+body {
+  background: linear-gradient(135deg, #000000 0%, #2a0a3a 100%);
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.modules-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.back-btn {
+  color: #e0aaff;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 30px;
+}
+
+.module-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #7b2cbf;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.install-btn {
+  background: transparent;
+  border: 1px solid #7b2cbf;
+  color: #e0aaff;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.install-btn:hover {
+  background: rgba(123, 44, 191, 0.2);
+}
