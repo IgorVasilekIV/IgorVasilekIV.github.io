@@ -143,49 +143,53 @@ p {
 }
 
 /* Стили для статистики GitHub */
+
 .github-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin: 25px 0;
+    gap: 10px; /* Расстояние между плитками */
+    margin: 15px 0;
 }
 
+/* Стили для отдельных плиток */
 .stat-item {
-    background: rgba(123, 44, 191, 0.1);
-    padding: 15px;
-    border-radius: 10px;
+    padding: 10px; /* Внутренние отступы */
+    border-radius: 8px;
     border: 1px solid #7b2cbf;
-    backdrop-filter: blur(5px);
+    background: rgba(123, 44, 191, 0.1);
+    backdrop-filter: blur(3px);
 }
 
+/* Размеры заголовков */
 .stat-item h3 {
+    font-size: 0.9em; /* Размер шрифта заголовка */
+    margin: 0 0 5px 0; /* Отступ снизу */
     color: #c77dff;
-    margin: 0 0 10px 0;
-    font-size: 0.9em;
 }
 
+/* Размеры чисел */
 .stat-item p {
+    font-size: 1.1em; /* Размер цифр */
     margin: 0;
-    font-size: 1.2em;
     font-weight: bold;
     color: #e0aaff;
 }
 
 /* Адаптивность для мобильных */
 @media (max-width: 480px) {
-    .avatar {
-        width: 120px;
-        height: 120px;
-    }
-    
-    h1 {
-        font-size: 1.5em;
-    }
-    
     .github-stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Одна колонка на мобильных */
     }
     
+    .stat-item {
+        padding: 8px;
+    }
+    
+    .stat-item h3 {
+        font-size: 0.8em;
+    }
+    
+    .stat-item p {
+        font-size: 1em;
+    }
     .modules-btn {
         padding: 10px 25px;
         font-size: 0.9em;
