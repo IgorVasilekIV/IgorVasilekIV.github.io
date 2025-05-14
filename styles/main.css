@@ -49,7 +49,7 @@ p {
 }
 
 .divider {
-    height: 1px;
+    height: 0.8px;
     background: linear-gradient(90deg, 
         transparent 0%, 
         #7b2cbf 50%, 
