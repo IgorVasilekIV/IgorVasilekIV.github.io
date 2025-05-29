@@ -12,7 +12,7 @@ async function loadGitHubStats() {
     
     document.getElementById('github-stats').innerHTML = `
             <div class="stat-item">
-                <h3>repos</h3>
+                <h3>public repos</h3>
                 <p>${userData.public_repos}</p>
             </div>
             <div class="stat-item">
